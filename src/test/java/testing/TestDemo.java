@@ -14,6 +14,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TestDemo {
@@ -28,7 +29,7 @@ public class TestDemo {
 	}
 
 	@Test
-	void demoTest() throws InterruptedException {
+	void demoTest() {
 		this.driver.get("http://automationpractice.com/index.php"); // goes to the page
 		//driver.get("http://automationpractice.com/index.php");
 		WebElement searchBar = driver.findElement(By.id("search_query_top"));
@@ -44,16 +45,39 @@ public class TestDemo {
 		WebElement addToCart = driver.findElement(By.className("box-cart-bottom"));
 		addToCart.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-		Thread.sleep(3000);
-		WebElement checkout = driver.findElement(By.className("button-container"));
+
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[@id=\"layer_cart\"]/div[1]/div[2]/div[4]/a")));
+		WebElement checkout = driver.findElement(By.xpath("//*[@id=\"layer_cart\"]/div[1]/div[2]/div[4]/a"));
 		checkout.click();
 		//driver.findElement(By.className("btn btn-default button button-medium")).click();
 		WebElement proceed = driver.findElement(By.cssSelector("#center_column > p.cart_navigation.clearfix > a.button.btn.btn-default.standard-checkout.button-medium"));
 		proceed.click();
-		
-		WebElement signUp = driver.findElement(By.id("email_create"));
-		signUp.sendKeys("test@gmail.com");
-		signUp.submit();
+
+		WebElement emailLogin = driver.findElement(By.id("email"));
+		WebElement passLogin = driver.findElement(By.id("passwd"));
+		String emaildetails = "testFaizaan@gmail.com";
+		String password = "123456";
+		//		WebElement createButton = driver.findElement(By.id("SubmitCreate"));
+		//		createButton.click();
+		emailLogin.sendKeys(emaildetails);
+		passLogin.sendKeys(password);
+
+		this.driver.findElement(By.id("SubmitLogin")).click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"center_column\"]/form/p/button")))
+		.click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#form > div > p.checkbox > label"))).click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#form > p > button > span"))).click();
+
+		wait.until(ExpectedConditions
+				.elementToBeClickable(By.cssSelector("#HOOK_PAYMENT > div:nth-child(1) > div > p > a"))).click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#cart_navigation > button"))).click();
+
+		assertEquals("Your order on My Store is complete.",
+				this.driver.findElement(By.cssSelector("#center_column > div > p")).getText());
 	}
 
 
